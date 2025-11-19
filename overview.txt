@@ -1,0 +1,73 @@
+amalfi-replication
+│
+├── code                          # Toàn bộ mã nguồn (theo style artifact)
+│   ├── feature_extraction        # BẠN tự implement lại feature từ paper
+│   │   ├── ast_queries           # Tree-sitter  rule JSTS, PII, fs, net, install scripts...
+│   │   ├── diff_features         # So sánh giữa 2 phiên bản gói
+│   │   └── build_feature_matrix.py
+│   │
+│   ├── training                  # Tương ứng codetraininingtrain_classifier.py contentReference[oaicite1]{index=1}
+│   │   ├── train_classifier.py
+│   │   ├── cross_validation.py
+│   │   └── models                # Lưu file model .pkl.joblib
+│   │
+│   ├── reproducer                # Tương ứng reproduce-package.sh, build-package.sh contentReference[oaicite2]{index=2}
+│   │   ├── reproduce_package.sh   # Git clone, npm pack, so sánh tarball
+│   │   └── build_package.sh
+│   │
+│   ├── clone_detector            # Tương ứng hash_package.py contentReference[oaicite3]{index=3}
+│   │   ├── hash_package.py        # Tính hash (MD5SHA256) nội dung gói
+│   │   └── clone_search.py        # So hash với DB malicious đã biết
+│   │
+│   ├── pipeline                  # Ghép 3 thành phần thành 1 pipeline Amalfi
+│   │   ├── run_on_corpus.py       # Chạy trên basic corpus  MalOSS  dataset riêng
+│   │   ├── streaming_monitor.py   # Mô phỏng quét daily như paper (sliding window) contentReference[oaicite4]{index=4}
+│   │   └── label_fusion.py        # Hợp nhất classifier + reproducer + clone-detector
+│   │
+│   └── utils
+│       ├── npm_registry.py
+│       ├── io_utils.py
+│       └── config.py
+│
+├── data
+│   ├── raw
+│   │   ├── npm_packages          # Tarball tải về (malicious + benign)
+│   │   └── metadata              # package.json, registry snapshot,...
+│   ├── intermediate
+│   │   ├── ast_json
+│   │   └── feature_vectors       # Ma trận đặc trưng (X, y)
+│   ├── basic_corpus              # Tái lập basic-corpus.csv contentReference[oaicite5]{index=5}
+│   ├── daily_snapshots           # Tái lập july-29.csv ... august-4.csv (Exp.1) contentReference[oaicite6]{index=6}
+│   └── external_datasets
+│       └── maloss                # Kết quả  sample từ MalOSS, DONAPI… nếu dùng contentReference[oaicite7]{index=7}
+│
+├── results
+│   ├── amalfi_replication        # Kết quả tái hiện Exp.1, Exp.2 của paper contentReference[oaicite8]{index=8}
+│   │   ├── sliding_window
+│   │   └── cross_validation
+│   ├── supply_chain_attacks      # Thử nghiệm trên các chiến dịch tấn công OSS mới (npmPyPI,…)
+│   └── timing                    # Đo time extract feature, train, predict (như artifact) contentReference[oaicite9]{index=9}
+│
+├── notebooks
+│   ├── 01_eda_basic_corpus.ipynb
+│   ├── 02_feature_importance.ipynb
+│   └── 03_case_study_supply_chain.ipynb
+│
+├── supply_chain
+│   ├── threat_models             # Tài liệu hoá mô hình tấn công vào OSS supply chain
+│   ├── case_studies              # Phân tích các vụ attack thật + cách Amalfi phát hiệnkhông phát hiện
+│   └── ioc_signatures            # IOCIOA, rule bổ sung (typosquatting, dependency confusion,…)
+│
+├── docs
+│   ├── architecture-amalfi.md     # Tóm tắt hình Figure 1 + flow Amalfi contentReference[oaicite10]{index=10}
+│   ├── replication-plan.md        # Bạn ghi rõ phần nào tái hiện được, phần nào ước lượng
+│   └── report                    # Bản thuyết minh, chương 1–4
+│
+├── scripts
+│   ├── fetch_new_packages.sh      # Cron mô phỏng monitor hàng ngày
+│   ├── run_full_pipeline.sh
+│   └── docker_build.sh            # Nếu đóng container
+│
+├── tests                         # Unit test cho feature_extraction, reproducer,...
+├── README.md
+└── requirements.txt  pyproject.toml
