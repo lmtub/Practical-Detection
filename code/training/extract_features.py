@@ -267,6 +267,7 @@ def extract_features_from_zip(zip_path: Path) -> Dict[str, float]:
     và trích feature tương tự như FS.
     """
     features: Dict[str, float] = {}
+    ZIP_PWD = b"infected"
 
     with ZipFile(zip_path, "r") as zf:
         names = zf.namelist()
@@ -312,8 +313,9 @@ def extract_features_from_zip(zip_path: Path) -> Dict[str, float]:
             _, ext = os.path.splitext(member.lower())
 
             try:
-                data = zf.read(member)
+                data = zf.read(member, pwd=ZIP_PWD)
             except Exception:
+                print(f"[WARN] Không đọc được {member}: {e}")
                 continue
 
             if ext in {".js", ".mjs", ".cjs"}:
